@@ -141,7 +141,7 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
         filename = sprintf('%d', idx);
         output_path = fullfile(output_dir, filename);
         alignImg(:, :, :, idx) = input_matrix(idx, ver_lower:ver_upper, hor_lower:hor_upper, :);
-        imwrite(squeeze(input_matrix(idx, ver_lower:ver_upper, hor_lower:hor_upper, :)), output_path, 'jpg');
+%         imwrite(squeeze(input_matrix(idx, ver_lower:ver_upper, hor_lower:hor_upper, :)), output_path, 'jpg');
     end
 end 
 
@@ -297,21 +297,21 @@ function loss = compare(mat1, mat2)
     loss = sum(sum(xor(mat1, mat2))) / (hidth1 * width1);
 end
 
-function empty = isEmptyDirectory(p)
-    if isdir(p)
-        f = dir(p);
-        empty = ~(length(f) > 2);
-    else
-        error('Error: % is not a directory', p);
-    end
-end
+% function empty = isEmptyDirectory(p)
+%     if isdir(p)
+%         f = dir(p);
+%         empty = ~(length(f) > 2);
+%     else
+%         error('Error: % is not a directory', p);
+%     end
+% end
 
-function deleteFileInDirectory(p)
-    file = dir(p);
-    for idx = 1:length(file)
-        if ~file(idx).isdir
-        % if ~filename.isdir
-            delete(fullfile(file(idx).folder, file(idx).name));
-        end
-    end
-end
+% function deleteFileInDirectory(p)
+%     file = dir(p);
+%     for idx = 1:length(file)
+%         if ~file(idx).isdir
+%         % if ~filename.isdir
+%             delete(fullfile(file(idx).folder, file(idx).name));
+%         end
+%     end
+% end
