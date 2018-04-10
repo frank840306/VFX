@@ -6,10 +6,13 @@ TO DO LIST
 4. other HDR creation method, ex: Mitsunaga and Nayar ()
 5. raw image
 
+Google drive report: https://docs.google.com/document/d/1-bll2OVJz5GCp35T9VNcQ7IQdMQ9gCJHNnryHJCKyvs/edit?usp=sharing
+
+
 Parameter setting 
 
 1. Sample point
-	P = 10
-	N = 50
+	P = 15
+	N = 100
 
 

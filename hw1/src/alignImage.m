@@ -50,19 +50,11 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
         [hidth, width, channel] = size(current_matrix);
 
         mat_thres = sum(sum(sum(current_matrix))) / (hidth * width * channel);
-        % testing weighted binary
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % weight = (input_matrix{idx} > 127) .* double(abs(255 - input_matrix{idx})) * 0.1 + (input_matrix{idx} <= 127) .* double(abs(0 - input_matrix{idx})) * 0.1;
-        % mat_thres = sum(sum(sum(double(input_matrix{idx}) .* weight))) / sum(sum(sum(weight)));
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         sort_idx(idx).thres = mat_thres;
         sort_idx(idx).idx = idx;
 
         input_grey_matrix = sum(current_matrix, 3) / 3;
         grey_size = size(input_grey_matrix);
-        % fprintf('grey matrix size = %d %d, dim = %d\n', grey_size(1), grey_size(2), length(grey_size));
-        % binary_matrix(idx, :, :) = zeros(hidth, width, 'uint8');
-        % binary_matrix(idx)(input_grey_matrix > mat_thres) = 1;
         binary_matrix(idx, :, :) = (input_grey_matrix > mat_thres);
         % fprintf('light pixel %d, dark pixel %d\n', sum(sum(xor(0, binary_matrix(idx)))), sum(sum(xor(1, binary_matrix{idx}))));
         
@@ -81,33 +73,7 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
     fprintf('Chosen idx: %d\n', chosen_idx)
 
     base_binary_matrix = squeeze(binary_matrix(chosen_idx, :, :));
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % base_binary_matrix = binary_matrix{1};
     
-    
-    % testing alignment function
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % clear binary_matrix
-    % clear base_binary_matrix
-    
-    % binary_matrix{1} = [1 1 1 1 0 1 1 1 0;...
-    %                     1 1 0 1 0 1 0 0 1;...
-    %                     1 1 1 0 0 1 1 0 0;...
-    %                     1 0 1 1 0 1 1 1 0;...
-    %                     0 0 0 1 0 0 1 0 0;...
-    %                     0 1 0 1 0 1 1 0 1;...
-    %                     1 1 1 0 0 1 1 0 1];
-    % binary_matrix{2} = [1 1 1 0 0 1 1 1 0;...
-    %                     1 1 0 1 0 0 0 1 1;...
-    %                     1 0 1 1 0 1 1 0 1;...
-    %                     1 0 1 1 0 1 1 1 0;...
-    %                     0 0 1 1 1 0 1 0 0;...
-    %                     0 0 0 1 0 1 1 0 1;...
-    %                     1 1 1 0 0 1 1 0 1];
-    % base_binary_matrix = binary_matrix{1};
-    
-    % input_size=2;
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     common_ver_lower = 1;
     common_ver_upper = hidth;
 
@@ -285,8 +251,6 @@ function [ver_move, hor_move] = align(base_mat, mat, scale)
 
 end
 
-
-
 function loss = compare(mat1, mat2)
     [hidth1, width1] = size(mat1);
     [hidth2, width2] = size(mat2);
@@ -296,22 +260,3 @@ function loss = compare(mat1, mat2)
     % loss = sum(sum(abs(mat1 - mat2)))/(hidth1 * width1);
     loss = sum(sum(xor(mat1, mat2))) / (hidth1 * width1);
 end
-
-% function empty = isEmptyDirectory(p)
-%     if isdir(p)
-%         f = dir(p);
-%         empty = ~(length(f) > 2);
-%     else
-%         error('Error: % is not a directory', p);
-%     end
-% end
-
-% function deleteFileInDirectory(p)
-%     file = dir(p);
-%     for idx = 1:length(file)
-%         if ~file(idx).isdir
-%         % if ~filename.isdir
-%             delete(fullfile(file(idx).folder, file(idx).name));
-%         end
-%     end
-% end
