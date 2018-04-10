@@ -1,4 +1,4 @@
-function alignImage(input_dir, output_dir, scale_num, bitmap)
+function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
     fprintf('Input directory: %s\n', input_dir)
     fprintf('Output directory: %s\n', output_dir)
     fprintf('Scale number: %d\n', scale_num)
@@ -126,6 +126,8 @@ function alignImage(input_dir, output_dir, scale_num, bitmap)
         total_hor_movement = total_hor_movement + abs(hor_move(idx));
         total_movement = total_ver_movement + total_hor_movement;
     end
+    clear binary_matrix
+    
     fprintf('Total movement: %d, vertical %d, horizontal %d\n', total_movement, total_ver_movement, total_hor_movement);
     for idx = 1:input_size
         ver_lower = common_ver_lower - ver_move(idx);
@@ -135,6 +137,7 @@ function alignImage(input_dir, output_dir, scale_num, bitmap)
         % fprintf('Image idx %d, vertical range = %d, horizontal range = %d\n', idx, ver_upper - ver_lower, hor_upper - hor_lower);
         filename = sprintf('%d', idx);
         output_path = fullfile(output_dir, filename);
+        alignImg(:, :, :, idx) = input_matrix{idx}(ver_lower:ver_upper, hor_lower:hor_upper, :);
         imwrite(input_matrix{idx}(ver_lower:ver_upper, hor_lower:hor_upper, :), output_path, 'jpg');
     end
 end 
@@ -287,7 +290,8 @@ function loss = compare(mat1, mat2)
     if hidth1 ~= hidth2 || width1 ~= width2
         error('Error: inconsistent matrix shape (%d %d) ~= (%d %d)', hidth1, width1, hidth2, width2);
     end
-    loss = sum(sum(abs(mat1 - mat2)))/(hidth1 * width1);
+    % loss = sum(sum(abs(mat1 - mat2)))/(hidth1 * width1);
+    loss = sum(sum(xor(mat1, mat2))) / (hidth1 * width1);
 end
 
 function empty = isEmptyDirectory(p)
