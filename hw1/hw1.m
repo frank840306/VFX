@@ -2,10 +2,12 @@ clear all;
 close all;
  
 
+% alignment parameter 
 scale_num = 5;          % the number of time to scale image
-output_bitmap = true;
+output_bitmap = false;
+%%%%%%%%%%%%%%%%%%%%%%%%%
 input_dir_idx = 1;      % the index of input image folder
-use_compress = true;    % currently compressed image only because of the insufficiency RAM
+use_compress = false;   % currently compressed image only because of the insufficiency RAM
 if use_compress
     input_dir = sprintf('%d_compressed', input_dir_idx);
 else

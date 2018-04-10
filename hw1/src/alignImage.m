@@ -35,7 +35,9 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
         for idx = 1:tmp_size
             if ~input_file(idx).isdir
                 filename = fullfile(input_file(idx).folder, input_file(idx).name);
-                input_matrix{input_size + 1} = imread(filename);
+                % input_matrix{input_size + 1} = imread(filename);
+                input_matrix(input_size + 1, :, :, :) = imread(filename);
+                
                 input_size = input_size + (1 - input_file(idx).isdir);
             end
         end
@@ -44,9 +46,10 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
     % get binary image
     for idx = 1:input_size
     % fprintf(, , )
-        [hidth, width, channel] = size(input_matrix{idx});
+        current_matrix = squeeze(input_matrix(idx, :, :, :));
+        [hidth, width, channel] = size(current_matrix);
 
-        mat_thres = sum(sum(sum(input_matrix{idx}))) / (hidth * width * channel);
+        mat_thres = sum(sum(sum(current_matrix))) / (hidth * width * channel);
         % testing weighted binary
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % weight = (input_matrix{idx} > 127) .* double(abs(255 - input_matrix{idx})) * 0.1 + (input_matrix{idx} <= 127) .* double(abs(0 - input_matrix{idx})) * 0.1;
@@ -55,19 +58,19 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
         sort_idx(idx).thres = mat_thres;
         sort_idx(idx).idx = idx;
 
-        input_grey_matrix = sum(input_matrix{idx}, 3) / 3;
+        input_grey_matrix = sum(current_matrix, 3) / 3;
         grey_size = size(input_grey_matrix);
         % fprintf('grey matrix size = %d %d, dim = %d\n', grey_size(1), grey_size(2), length(grey_size));
-        binary_matrix{idx} = zeros(hidth, width);
-        binary_matrix{idx}(input_grey_matrix > mat_thres) = 1;
-        
-        % fprintf('light pixel %d, dark pixel %d\n', sum(sum(xor(0, binary_matrix{idx}))), sum(sum(xor(1, binary_matrix{idx}))));
+        % binary_matrix(idx, :, :) = zeros(hidth, width, 'uint8');
+        % binary_matrix(idx)(input_grey_matrix > mat_thres) = 1;
+        binary_matrix(idx, :, :) = (input_grey_matrix > mat_thres);
+        % fprintf('light pixel %d, dark pixel %d\n', sum(sum(xor(0, binary_matrix(idx)))), sum(sum(xor(1, binary_matrix{idx}))));
         
         % output bitmap file
         if bitmap
             filename = sprintf('bitmap_%d', idx);
             output_path = fullfile(bitmap_dir, filename);
-            imwrite(binary_matrix{idx}, output_path, 'jpg');
+            imwrite(squeeze(binary_matrix(idx, :, :)), output_path, 'jpg');
         end
     end
     
@@ -77,7 +80,7 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
     chosen_idx = sorted_idx(ceil(input_size / 2)).idx;
     fprintf('Chosen idx: %d\n', chosen_idx)
 
-    base_binary_matrix = binary_matrix{chosen_idx};
+    base_binary_matrix = squeeze(binary_matrix(chosen_idx, :, :));
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % base_binary_matrix = binary_matrix{1};
     
@@ -115,7 +118,7 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
     total_ver_movement = 0;
     for idx = 1:input_size
     % default scale = 6
-        [ver_move(idx), hor_move(idx)] = align(base_binary_matrix, binary_matrix{idx}, scale_num);
+        [ver_move(idx), hor_move(idx)] = align(base_binary_matrix, squeeze(binary_matrix(idx, :, :)), scale_num);
         fprintf('vertical move: %d, horizontal move: %d\n', ver_move(idx), hor_move(idx));
         common_ver_lower = max(common_ver_lower, common_ver_lower + ver_move(idx));
         common_ver_upper = min(common_ver_upper, common_ver_upper + ver_move(idx));
@@ -127,7 +130,7 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
         total_movement = total_ver_movement + total_hor_movement;
     end
     clear binary_matrix
-    
+
     fprintf('Total movement: %d, vertical %d, horizontal %d\n', total_movement, total_ver_movement, total_hor_movement);
     for idx = 1:input_size
         ver_lower = common_ver_lower - ver_move(idx);
@@ -137,8 +140,8 @@ function alignImg = alignImage(input_dir, output_dir, scale_num, bitmap)
         % fprintf('Image idx %d, vertical range = %d, horizontal range = %d\n', idx, ver_upper - ver_lower, hor_upper - hor_lower);
         filename = sprintf('%d', idx);
         output_path = fullfile(output_dir, filename);
-        alignImg(:, :, :, idx) = input_matrix{idx}(ver_lower:ver_upper, hor_lower:hor_upper, :);
-        imwrite(input_matrix{idx}(ver_lower:ver_upper, hor_lower:hor_upper, :), output_path, 'jpg');
+        alignImg(:, :, :, idx) = input_matrix(idx, ver_lower:ver_upper, hor_lower:hor_upper, :);
+        imwrite(squeeze(input_matrix(idx, ver_lower:ver_upper, hor_lower:hor_upper, :)), output_path, 'jpg');
     end
 end 
 
