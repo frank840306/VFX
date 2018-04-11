@@ -1,18 +1,11 @@
-TO DO LIST
+[版本]
+MATLAB R2016b
 
-1. alignment: MTB (Frank) --> output alignment image 
-2. HDR response curve (sample + Ax=b + ave. Ei + ghost removal) (Anita) --> output image, heat-map
-3. tone mapping: photographic tone reproduction for digital images ()
-4. other HDR creation method, ex: Mitsunaga and Nayar ()
-5. raw image
+[執行]
+1. 終端機
+    進入hw1資料夾後執行sh run.sh
+2. MATLAB GUI
+    進入hw1資料夾後執行hw1
 
-Google drive report: https://docs.google.com/document/d/1-bll2OVJz5GCp35T9VNcQ7IQdMQ9gCJHNnryHJCKyvs/edit?usp=sharing
-
-
-Parameter setting 
-
-1. Sample point
-	P = 15
-	N = 100
-
-
+[結果]
+執行結果存在result資料夾裡，HDR.hdr為重建好的HDR Image，global_tm.jpg為tone mapping後的結果

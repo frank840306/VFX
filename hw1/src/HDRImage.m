@@ -24,9 +24,14 @@ function HDRImage(images, exposure_time, image_num, output)
     for i = 1:3
         [g(:, i), ~] = gsolve(sample_points(:, :, i), exposure_time_ln, lambda, w);
     end
-%     plot(g);
+%     hold on
+%     x = 1:1:256;
+%     plot(x, g(x, 1), 'r')
+%     plot(x, g(x, 2), 'g')
+%     plot(x, g(x, 3), 'b')
+%     legend('Red Channel','Green Channel', 'Blue Channel')
 
-    disp('computing lnE...');
+    disp('computing lnE...with ghost removal');
     tmp = images(:, :, 1, :);
     tmp = reshape(tmp, row * col, image_num);
     tmp = g(tmp + 1) - exposure_time_ln;
