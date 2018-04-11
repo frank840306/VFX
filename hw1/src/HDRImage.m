@@ -24,14 +24,30 @@ function HDRImage(images, exposure_time, image_num, output)
     for i = 1:3
         [g(:, i), ~] = gsolve(sample_points(:, :, i), exposure_time_ln, lambda, w);
     end
-    % plot(g);
+%     plot(g);
 
     disp('computing lnE...');
+    tmp = images(:, :, 1, :);
+    tmp = reshape(tmp, row * col, image_num);
+    tmp = g(tmp + 1) - exposure_time_ln;
+    tmp = var(double(tmp), 0, 2);
+    index = find(tmp > 0.08);
+%     tmp = reshape(tmp, row, col);
+%     tmp(index) = 2;
+%     colormap('hot')
+%     imagesc(tmp)
+%     colorbar
+
     lnE = zeros(row * col, channel);
+    lnE_7 = zeros(row * col, channel);
     for i = 1:channel
         tmp = images(:, :, i, :);
         tmp = reshape(tmp, row * col, image_num);
         lnE(:, i) = sum(w(tmp + 1) .* (g(tmp + 1) - exposure_time_ln), 2) ./ sum(w(tmp + 1), 2);
+        
+        tmp = tmp(:, 7);
+        lnE_7(:, i) = g(tmp + 1) - exposure_time_ln(7);
+        lnE(index, i) = lnE_7(index, i);
     end
 
     disp('computing HDR image...');
