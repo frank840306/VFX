@@ -36,9 +36,16 @@ for idx = 1:img_size
     imwrite(squeeze(warpingImages(:, :, :, idx)), output_path, 'jpg');
 end
 
-% feature detection
-
-
+% feature detection and description
+descriptors = zeros(500, 66, img_size);
+for idx = 1:img_size
+    disp(['Computing feature detection and description for image_' int2str(idx)])
+    warpingImages_gray = rgb2gray(warpingImages(:, :, :, idx));
+    descriptors(:, :, idx) = MSOP(warpingImages_gray);
+    
+    filename = [res_dir '/feature_' int2str(idx) '.jpg'];
+    imwrite(insertMarker(warpingImages(:, :, :, idx), [round(descriptors(:, 1, idx)), round(descriptors(:, 2, idx))]), filename);
+end
 
 % image stitching
 
