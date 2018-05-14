@@ -1,4 +1,4 @@
-function [row, col, value] = localMax_sub(image)
+function [row, col, value] = localMax(image)
 
     [Px, Py] = gradient(single(image));
     Px = imgaussfilt(Px, 1.0);

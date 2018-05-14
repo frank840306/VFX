@@ -1,20 +1,25 @@
-function [feature] = MSOPDetector_sub(image)
+function [feature] = MSOP(image)
     
-    [row, col, value] = localMax_sub(image);
-    level = ones(length(row), 1);
+    [row, col, value] = localMax(image);
+    descriptor = constructDescriptor(image, row, col);
+%     level = ones(length(row), 1);
     for i = 1:3
         n = 2 ^ i;
-        disp(['Subsampling factor: ' int2str(n)]);
+        disp(['Level: ' int2str(i) ', subsampling factor: ' int2str(n)]);
         image_tmp = image(1:n:end, 1:n:end);
         
-        [row_tmp, col_tmp, value_tmp] = localMax_sub(image_tmp);
+        [row_tmp, col_tmp, value_tmp] = localMax(image_tmp);
         row = [row; row_tmp .* n];
         col = [col; col_tmp .* n];
         value = [value; value_tmp];
         
-        tmp(1:length(row_tmp), 1) = n;
-        level = [level; tmp];
-        clear tmp
+        disp(['Level: ' int2str(i) ', constructing descriptor...']);
+        descriptor_tmp = constructDescriptor(image_tmp, row_tmp, col_tmp);
+        descriptor = [descriptor; descriptor_tmp];
+        
+%         tmp(1:length(row_tmp), 1) = n;
+%         level = [level; tmp];
+%         clear tmp
     end
     
     dist = zeros(length(row));
@@ -35,6 +40,7 @@ function [feature] = MSOPDetector_sub(image)
     [~, index] = sort(dist, 'descend');
     row = row(index(1:n));
     col = col(index(1:n));
-    level = level(index(1:n));
-    feature = [col, row, level];     % x, y form
-%     feature = [row, col, level];       % matrix form
+    descriptor = descriptor(index(1:n), :);
+    
+    feature = [col, row, descriptor];     % x, y form
+%     feature = [row, col, descriptor];       % matrix form
