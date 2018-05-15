@@ -5,10 +5,14 @@ close all;
 
 % task = 'denny';     % denny for test, church for demo
 % task = 'church';
-task = 'parrington';
+% task = 'parrington';
+task = 'HSNU';
+
 % focal_length = 1000;
 % focal_length = 1094.45; % pseudo 1094.45
-focal_length = 706.286; % pseudo 1094.45
+% focal_length = 706.286; % pseudo 1094.45
+focal_length = 1100;
+
 descriptor_thres = 0.8;
 image_thres = 60;
 cache = false;       % save and load mat file
