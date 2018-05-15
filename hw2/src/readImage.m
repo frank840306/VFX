@@ -26,6 +26,8 @@ function image_name_list = get_name_list(data_dir, task)
         name_template = task;    
     elseif strcmp(task, 'church')
         name_template = 'IMG_';
+    elseif strcmp(task, 'parrington')
+        name_template = 'prtn';
     else
         error('Error: Unknown task: %s', task);
     end
