@@ -19,6 +19,8 @@ function panorama = matchImage(image1, image2, dx, dy)
     % panorama(: , w_p - w_2 + 1:w_1) = blendImage();
     % panorama(: , w_1 + 1:end) = image2(:, w_2 - w_1 + dx + 1:end);
     if dx > 0
+        % size(image1)
+        % size(image2)
         if dy >= 0
             panorama = [image1(:, 1:dx, :), blendImage(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy), image2(:, w_1 - dx + 1:end, :)];
         else

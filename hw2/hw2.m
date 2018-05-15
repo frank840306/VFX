@@ -3,16 +3,16 @@ close all;
 
 % parameter setting
 
-% task = 'denny';     % denny for test, church for demo
-task = 'church';
-% focal_length = 1.7 * 25;
+task = 'denny';     % denny for test, church for demo
+% task = 'church';
+% focal_length = 1000;
 focal_length = 1094.45; % pseudo 1094.45
 descriptor_thres = 0.8;
-image_thres = 100;
+image_thres = 60;
 cache = false;       % save and load mat file
 saveCache = true;   % whether to save mat file
 
-% cache = true;
+cache = true;
 
 % path setting
 src_dir = './src';
@@ -24,7 +24,7 @@ result_dir = './result';
 old_path = path;
 path(old_path, src_dir);
 
-createDirectory(res_dir, false);    % do not clear the dir
+createDirectory(res_dir, true);    % do not clear the dir
 createDirectory(mat_dir, false);    % do not clear the dir
 createDirectory(result_dir, true);  % clear the dir
 
@@ -41,6 +41,7 @@ else
         save(fullfile(mat_dir, 'warpedImages'), 'warpedImages');
     end
 end
+% img_size = 6;
 % write warping images
 for idx = 1:img_size
     filename = sprintf('%s_warp_%d.jpg', task, idx);
@@ -78,12 +79,19 @@ for idx = 1:img_size - 1
     
     pos1 = descriptors(:, 1:2, idx);
     pos2 = descriptors(:, 1:2, idx + 1);
+    
     des1 = descriptors(:, 3:end, idx);
     des2 = descriptors(:, 3:end, idx + 1);
     % find the matched descriptor
     matched_idx = matchDescriptor(des1, des2, descriptor_thres);
+    plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), pos1(matched_idx(:, 1), :), pos2(matched_idx(:, 2), :), sprintf('res/matchDrscriptor_compare%d_%d.png', idx, idx+1));
+    
     % remove the outlier
-    [match_pos1, match_pos2] = RANSAC(matched_idx, pos1, pos2, image_thres);
+    [match_pos1, match_pos2, s1, s2] = RANSAC(matched_idx, pos1, pos2, image_thres);
+    fprintf('match descriptor size: %d\n', size(match_pos1, 1));
+    plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), match_pos1, match_pos2, sprintf('res/ransac_compare%d_%d.png', idx, idx+1));
+    plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), s1, s2, sprintf('res/ransac_sample_compare%d_%d.png', idx, idx+1));
+    
     % get the best dx and dy to align descriptor
     [dx, dy] = alignDescriptor(match_pos1, match_pos2);
     % dx is the horizontal move for image(idx+1) to match image(idx)
@@ -96,6 +104,8 @@ for idx = 1:img_size - 1
     output_path = fullfile(res_dir, filename);
     imwrite(panorama, output_path, 'jpg');
     % total_dy = total_dy + delta{idx}(2);
+    % break;
+    
 end
 
 filename = sprintf('%s_panorama.jpg', task);

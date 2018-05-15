@@ -18,12 +18,12 @@ function blendedImage = blendImage(image1, image2, dy)
             % fprintf('Error: unable to deal with dy < 0');
             fprintf('dy(%d) < 0\n', dy);
             tmpImage = [image2(1:abs(dy), :, :); interpolateImage(image1(abs(dy)+1:end, :, :), image2(1:h_2 - abs(dy), :, :), true); image1(h_2 - abs(dy) + 1:end, :, :)];    
-            h_start = int32(abs(dy):dy / (w_1 - 1):0)
+            h_start = int32(abs(dy):dy / (w_1 - 1):0);
         else
             tmpImage = interpolateImage(image1(dy+1:end, :, :), image2(1:h_2 - dy, :, :), false);
             h_start = int32(0:dy / (w_1 - 1):dy);
         end
-        if h_start ~= 0
+        if length(h_start) ~= 0
             blendedImage = zeros(h_1, w_1, c_1);
             for idx=1:w_1
                 % fprintf('%d %d\n', h_start(idx)+1, h_start(idx) + h_1);
@@ -31,6 +31,7 @@ function blendedImage = blendImage(image1, image2, dy)
             end
         else
             blendedImage = tmpImage;
+            size(blendedImage)
         end
     end
 end
@@ -44,8 +45,8 @@ function interpolatedImage = interpolateImage(image1, image2, reversed)
         % default reversed is false
         fprintf('InterpolatedImage: interpolate range: (height, width, reversed) = (%d, %d, %d)\n', h_1, w_1, reversed);
         if ~reversed
-            r_1 = 1:-1 / (w_2 - 1):0;
-            r_2 = 0:1 / (w_1 - 1):1;
+            r_1 = 1:-1 / (w_1 - 1):0;
+            r_2 = 0:1 / (w_2 - 1):1;
         else
             r_1 = 0:1 / (w_1 - 1):1;
             r_2 = 1:-1 / (w_2 - 1):0;
@@ -55,6 +56,8 @@ function interpolatedImage = interpolateImage(image1, image2, reversed)
         interpolatedImage = zeros(h_1, w_1, c_1);
         for w = 1:w_1
             % disp(image1(:, w, :) * r_1(w) + image2(:, w, :) * r_2(w));
+            % interpolatedImage(:, w, :) = image2(:, w, :);
+            
             interpolatedImage(:, w, :) = image1(:, w, :) * r_1(w) + image2(:, w, :) * r_2(w);
             % break;
         end

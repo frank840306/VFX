@@ -9,10 +9,15 @@ function [dx, dy] = alignDescriptor(pos1, pos2)
     A = zeros(2 * pos_size + 1, 3);
     b = zeros(2 * pos_size + 1, 1);
     for idx = 1:pos_size
-        x_or_y = floor((idx - 1) / pos_size) + 1;   % 1 for x, 2 for y    
-        A(idx, x_or_y) = 1;
-        A(idx, 3) = pos2(idx, x_or_y);
-        b(idx, 1) = pos1(idx, x_or_y);
+        % x_or_y = ceil(idx / pos_size);   % 1 for x, 2 for y    
+        A(idx, 1) = 1;
+        A(idx, 3) = pos2(idx, 1);
+        b(idx, 1) = pos1(idx, 1);
+    end
+    for idx = 1: pos_size
+        A(pos_size + idx, 2) = 1;
+        A(pos_size + idx, 3) = pos2(idx, 2);
+        b(pos_size + idx, 1) = pos1(idx, 2);
     end
     A(2 * pos_size + 1, 3) = 1;
     b(2 * pos_size + 1, 1) = 1;
@@ -22,5 +27,5 @@ function [dx, dy] = alignDescriptor(pos1, pos2)
     % delta(3) = [];
     dx = delta(1);
     dy = delta(2);
-    fprintf('dx = %d, dy = %d\n', dx, dy);
+    fprintf('dx = %d, dy = %d, tmp = %d\n', dx, dy, delta(3));
 end
