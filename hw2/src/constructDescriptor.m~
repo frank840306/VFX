@@ -18,10 +18,9 @@ function [descriptor] = constructDescriptor(image, row, col)
     index = sub2ind(size(C), row_int, col_int);
     rotation = [C(index), -S(index), S(index), C(index)];
     rotation = transpose(rotation);
-    tmp = size(rotation);
-%     disp(tmp(2));
-    rotation = reshape(rotation, 2, 2, tmp(2));
-%     disp(size(rotation));
+    disp(size(rotation());
+    rotation = reshape(rotation, 2, 2, length(rotation));
+    disp(size(rotation));
 
     % patch = 40 * 40, and the feature point is at (20, 20)
     window = zeros(2, 1600);
