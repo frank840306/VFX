@@ -5,7 +5,11 @@ function warpingImages = inverseWarping(images, img_size, img_h, img_w, channel,
 %
 % Long description
     warpingImages = zeros(img_h, img_w, channel, img_size, 'uint8');
-    
+    min_x = inf;
+    max_x = 0;
+    min_y = inf;
+    max_y = 0;
+
     mid_x = img_w / 2;
     mid_y = img_h / 2;
     % fprintf('%d %d', mid_x, mid_y);
@@ -17,15 +21,22 @@ function warpingImages = inverseWarping(images, img_size, img_h, img_w, channel,
             y = y + mid_y;
             % reconstruct
             if (1 <= x) && (x <= img_w) && (1 <= y) && (y <= img_h)
-                floor_x = floor(x);
-                ceil_x = ceil(x);
-                floor_y = floor(y);
-                ceil_y = ceil(y);
-                colors = (images(floor_y, floor_x, :, :) / 4 + images(floor_y, ceil_x, :, :) / 4 + images(ceil_y, floor_x, :, :) / 4 + images(ceil_y, ceil_x, : , :) / 4);
-                colors = reshape(colors, [channel, img_size]);
-                warpingImages(new_y, new_x, :, :) = colors;     
+                % floor_x = floor(x);
+                % ceil_x = ceil(x);
+                % floor_y = floor(y);
+                % ceil_y = ceil(y);
+                % colors = (images(floor_y, floor_x, :, :) / 4 + images(floor_y, ceil_x, :, :) / 4 + images(ceil_y, floor_x, :, :) / 4 + images(ceil_y, ceil_x, : , :) / 4);
+                % colors = reshape(colors, [channel, img_size]);
+                % warpingImages(new_y, new_x, :, :) = colors;
+                min_x = min(min_x, new_x);
+                max_x = max(max_x, new_x);
+                min_y = min(min_y, new_y);
+                max_y = max(max_y, new_y);
+                warpingImages(new_y, new_x, :, :) = images(round(y), round(x), :, :);    
             end
         end
     end
-    figure(1); imshow(warpingImages(:, :, :, 1));
+    fprintf('min x: %d, max x: %d, min y: %d. max y: %d\n', min_x, max_x, min_y, max_y);
+    warpingImages = warpingImages(min_y:max_y, min_x:max_x, :, :);
+    % figure(1); imshow(warpingImages(:, :, :, 1));
 end

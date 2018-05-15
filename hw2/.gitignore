@@ -1,3 +1,6 @@
 data/
 res/
+mat/
+tutorial/
+.vscode/
 .DS_Store

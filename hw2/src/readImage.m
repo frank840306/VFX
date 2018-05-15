@@ -11,7 +11,7 @@ function [images, img_size, img_h, img_w, channel] = readImage(data_dir, task)
     %     disp(image_name_list{idx});
     % end
     for idx = 1:img_size
-        fprintf('image: %s\n', image_name_list{idx});
+        % fprintf('image: %s\n', image_name_list{idx});
         images(:, :, :, idx) = imread(image_name_list{idx});
         if idx == 1
             [img_h, img_w, channel] = size(squeeze(images(:, :, :, idx)));    
