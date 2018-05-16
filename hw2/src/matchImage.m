@@ -63,7 +63,7 @@ function [panorama, posi_thres, nega_thres] = matchImage(image1, image2, dx, dy,
         
 
         % panorama = [image1(:, 1:dx, :), blendImage(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy), image2(:, w_1 - dx + 1:end, :)];
-        panorama = uint8(panorama);
+        % panorama = uint8(panorama);
     else
         error('Error: unable to deal with dx(%d) < 0\n', dx);
     end

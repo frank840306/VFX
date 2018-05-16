@@ -3,8 +3,8 @@ close all;
 
 % parameter setting
 
-task = 'denny';     % denny for test, church for demo
-% task = 'church';
+% task = 'denny';     % denny for test, church for demo
+task = 'church';
 % task = 'parrington';
 % task = 'HSNU';
 % task = 'csie';
@@ -12,7 +12,7 @@ task = 'denny';     % denny for test, church for demo
 % focal_length = 1000;
 % focal_length = 1094.45; % pseudo 1094.45
 % focal_length = 706.286; % pseudo 1094.45
-focal_length = 1100;
+% focal_length = 1100;
 
 descriptor_thres = 0.8;
 image_thres = 60;
@@ -32,13 +32,14 @@ old_path = path;
 path(old_path, src_dir);
 
 
-createDirectory(res_dir, true);    % do not clear the dir
+createDirectory(res_dir, false);    % do not clear the dir
 createDirectory(mat_dir, false);    % do not clear the dir
 createDirectory(result_dir, false);  % clear the dir
 
 % read image
 [images, img_size, img_h, img_w, channel] = readImage(data_dir, task);
-    
+focal_length = readFocalLength(data_dir, task);
+
 if cache
     load(fullfile(mat_dir, 'warpedImages'));
 else
@@ -66,8 +67,9 @@ else
         warpedImages_gray = rgb2gray(warpedImages(:, :, :, idx));
         descriptors(:, :, idx) = MSOP(warpedImages_gray);
 
-        filename = [res_dir '/feature_' int2str(idx) '.png'];
-        imwrite(insertMarker(warpedImages(:, :, :, idx), [round(descriptors(:, 1, idx)), round(descriptors(:, 2, idx))]), filename);
+        % filename = [res_dir '/_feature_' int2str(idx) '.png'];
+        filename = fullfile(res_dir, sprintf('%s_feature_%d.png', task, idx));
+        imwrite(insertMarker(warpedImages(:, :, :, idx), [round(descriptors(:, 1, idx)), round(descriptors(:, 2, idx))]), filename, 'png');
     end
     if saveCache
         save(fullfile(mat_dir, 'descriptors'), 'descriptors');
@@ -77,14 +79,15 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % total_dy = 0;
-if cache
-    load(fullfile(mat_dir, 'panorama'));
-    load(fullfile(mat_dir, 'accumulate_dy'));
-else
+% if cache
+%     load(fullfile(mat_dir, 'panorama'));
+%     load(fullfile(mat_dir, 'accumulate_dy'));
+% else
     accumulate_dx = 0;
     accumulate_dy = 0;
     posi_thres = 0;
     nega_thres = 0;
+    warpedImages = double(warpedImages);
     panorama = warpedImages(:, :, :, 1);
     for idx = 1:img_size - 1
     % for idx = 1:5 
@@ -97,13 +100,13 @@ else
         des2 = descriptors(:, 3:end, idx + 1);
         % find the matched descriptor
         matched_idx = matchDescriptor(des1, des2, descriptor_thres);
-        plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), pos1(matched_idx(:, 1), :), pos2(matched_idx(:, 2), :), sprintf('res/matchDrscriptor_compare%d_%d.png', idx, idx+1));
+        plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), pos1(matched_idx(:, 1), :), pos2(matched_idx(:, 2), :), sprintf('res/%s_matchDrscriptor_compare%d_%d.png', task, idx, idx+1));
         
         % remove the outlier
         [match_pos1, match_pos2, s1, s2] = RANSAC(matched_idx, pos1, pos2, image_thres);
         fprintf('match descriptor size: %d\n', size(match_pos1, 1));
-        plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), match_pos1, match_pos2, sprintf('res/ransac_compare%d_%d.png', idx, idx+1));
-        plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), s1, s2, sprintf('res/ransac_sample_compare%d_%d.png', idx, idx+1));
+        plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), match_pos1, match_pos2, sprintf('res/%s_ransac_compare%d_%d.png', task, idx, idx+1));
+        plotMatchLink(warpedImages(:, :, :, idx), warpedImages(:, :, :, idx + 1), s1, s2, sprintf('res/%s_ransac_sample_compare%d_%d.png', task, idx, idx+1));
         
         % get the best dx and dy to align descriptor
         [dx, dy] = alignDescriptor(match_pos1, match_pos2);
@@ -118,14 +121,15 @@ else
 
         filename = sprintf('%s_panorama_%d_%d.png', task, 1, idx + 1);
         output_path = fullfile(res_dir, filename);
-        imwrite(panorama, output_path, 'png');
+        % panorama = uint32(panorama);
+        imwrite(uint8(panorama), output_path, 'png');
         % break;
     end
     if saveCache
         save(fullfile(mat_dir, 'panorama'), 'panorama');
         save(fullfile(mat_dir, 'accumulate_dy'), 'accumulate_dy');
     end
-end
+% end
 
 % TODO: 拉正
 [h_p, w_p, c_p] = size(panorama);
@@ -144,14 +148,14 @@ end
 panorama = panorama(1:img_h, :, :);
 [h_p, w_p, c_p] = size(panorama);
 fprintf('Panorama size: (%d %d %d)\n', h_p, w_p, c_p);
-
+imwrite(uint8(panorama), fullfile(res_dir, sprintf('%s_align_panorama.png', task)), 'png');
 
 panorama = seamCarving(panorama);
 
 
 filename = sprintf('%s_panorama.png', task);
 output_path = fullfile(result_dir, filename);
-imwrite(panorama(1:img_h, :, :), output_path, 'png');
+imwrite(panorama, output_path, 'png');
 [h_p, w_p, c_p] = size(panorama);
 fprintf('Panorama size: (%d %d %d)\n', h_p, w_p, c_p);
 

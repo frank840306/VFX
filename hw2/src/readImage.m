@@ -29,7 +29,7 @@ function image_name_list = get_name_list(data_dir, task)
     elseif strcmp(task, 'parrington')
         name_template = 'prtn';
     elseif strcmp(task, 'HSNU')
-        name_template = '';
+        name_template = 'h_';
     elseif strcmp(task, 'csie')
         name_template = 'IMG_';
     else

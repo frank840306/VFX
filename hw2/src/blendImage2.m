@@ -57,9 +57,25 @@ function interpolatedImage = interpolateImage(img1, img2)
     if (h_1 ~= h_2) || (w_1 ~= w_2) || (c_1 ~= c_2)
         error('Error: image shape not match (%d %d %d) ~= (%d %d %d)', h_1, w_1, c_1, h_2, w_2, c_2);
     else
+        % inter_range = round(h_1 / 20);
+        % interpolatedImage = [zeros(h_1, inter_range, c_1), img2(:, inter_range + 1:end, :)];
+        % fprintf('size: %d', size(interpolatedImage, 2));
+        % r_1 = 1:-1 / (inter_range - 1):0;
+        % r_2 = 0:1 / (inter_range - 1):1;
+        % for w = 1:inter_range
+        %     interpolatedImage(:, w, :) = r_1(w) * img1(:, w_1 - inter_range + w, :) + r_2(w) * img2(:, w, :);
+        % end
+        
         interpolatedImage = zeros(h_1, w_1, c_1);
-        r_1 = 1:-1 / (w_1 - 1):0;
-        r_2 = 0:1 / (w_2 - 1):1;
+        % r_1 = 1:-1 / (w_1 - 1):0;
+        % r_2 = 0:1 / (w_2 - 1):1;
+        
+        % sp = 1;
+        sp = round(w_1 / 2) - 15;
+        ep = sp + 30;
+        r_1 = 1:-1 / (ep - sp):0;
+        r_2 = 0:1 / (ep - sp):1;
+        
         for h = 1:h_1
             for w = 1:w_1
                 if sum(img1(h, w, :)) == 0
@@ -67,7 +83,14 @@ function interpolatedImage = interpolateImage(img1, img2)
                 elseif sum(img2(h, w, :)) == 0
                     interpolatedImage(h, w, :) = img1(h, w, :);
                 else
-                    interpolatedImage(h, w, :) = r_1(w) * img1(h, w, :) + r_2(w) * img2(h, w, :);
+                    if sp <= w && w <= ep
+                        % interpolatedImage(h, w, :) = r_1(w) * img1(h, w, :) + r_2(w) * img2(h, w, :);
+                        interpolatedImage(h, w, :) = r_1(w - sp + 1) * img1(h, w, :) + r_2(w - sp + 1) * img2(h, w, :);
+                    elseif w < sp
+                        interpolatedImage(h, w, :) = img1(h, w, :);
+                    elseif w > ep
+                        interpolatedImage(h, w, :) = img2(h, w, :);
+                    end
                 end
             end
         end

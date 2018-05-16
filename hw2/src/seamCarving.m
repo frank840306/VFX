@@ -6,7 +6,27 @@ function img = seamCarving(img)
 % Long description
     [h, w, ~] = size(img);
     % TODO: 
-    sum_bool_vertical = sum(boolean(rgb2gray(img)), 2);
+    bool_img = boolean(rgb2gray(img));
+    sum_bool_horivontal = sum(bool_img, 1);
+    min_x = 0;
+    max_x = 0;
+    flag = 0;
+    for idx = 1:w
+        if sum_bool_horivontal(idx) ~= 0
+            if flag == 0
+                min_x = idx;
+                flag = 1;
+            end
+            max_x = idx;
+        end
+    end
+    fprintf('min: %d, max: %d\n', min_x, max_x);
+    img = img(:, min_x:max_x, :);
+    [h, w, ~] = size(img);
+    
+    bool_img = boolean(rgb2gray(img));
+    sum_bool_vertical = sum(bool_img, 2);
+    
     up_limit = 0;
     down_limit = 0;
     flag = 0;
@@ -20,17 +40,18 @@ function img = seamCarving(img)
             up_limit = idx;
         end
     end
-    % fprintf('%d\n', up_limit);
+    fprintf('up: %d, down: %d\n', up_limit, down_limit);
             
     img(1:up_limit, :, :) = carve_up(img(1:up_limit, :, :));
-    % img() = carve_down(img);
-    
+    img(down_limit:end, :, :) = carve_down(img(down_limit:end, :, :));
+    img = uint8(img);
 end
 
 
 function img = carve_up(img)
     iter = 0;
     img = double(img);
+    carveFlag = zeros(1, size(img, 1));
     while true
         iter = iter + 1;
         fprintf('========== Iteration %2d ==========\n', iter);
@@ -68,9 +89,10 @@ function img = carve_up(img)
             end
             min_grad = inf;
             for y = 1:h
-                if dp(y, segment_w) < min_grad && gray_img(y, segment_end(segment_idx)) ~= 0
+                if dp(y, segment_w) < min_grad && gray_img(y, segment_end(segment_idx)) ~= 0 && carveFlag(y) == 0
                     min_grad = dp(y, segment_w);
                     min_y = y;
+                    carveFlag(y) = 1;
                 end
             end
             min_grad_path = [];
@@ -101,9 +123,12 @@ function img = carve_up(img)
     img = uint8(img);
 end
 
-% function img = carve_down(img)
-    
-% end
+function img = carve_down(img)
+    [h, w, c] = size(img);
+    img = img(h:-1:1, :, :);
+    img = carve_up(img);
+    img = img(h:-1:1, :, :);
+end
 
 function [segment_start, segment_end, segment_num] = expand_segment(bool_line)
     % bool_line(1:500)
@@ -146,3 +171,4 @@ function [segment_start, segment_end, segment_num] = expand_segment(bool_line)
         fprintf('\n');
     end
 end
+
