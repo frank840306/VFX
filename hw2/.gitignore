@@ -3,3 +3,4 @@ mat/
 tutorial/
 .vscode/
 .DS_Store
+data/*.zip

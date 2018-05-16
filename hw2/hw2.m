@@ -18,7 +18,7 @@ image_thres = 60;
 cache = false;       % save and load mat file
 saveCache = true;   % whether to save mat file
 
-cache = true;
+% cache = true;
 
 % path setting
 src_dir = './src';
@@ -30,9 +30,10 @@ result_dir = './result';
 old_path = path;
 path(old_path, src_dir);
 
+
 createDirectory(res_dir, true);    % do not clear the dir
 createDirectory(mat_dir, false);    % do not clear the dir
-createDirectory(result_dir, true);  % clear the dir
+createDirectory(result_dir, false);  % clear the dir
 
 
 % read image
@@ -74,15 +75,18 @@ end
 %     end
 % end
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % total_dy = 0;
 accumulate_dx = 0;
+accumulate_dy = 0;
+posi_thres = 0;
+nega_thres = 0;
 panorama = warpedImages(:, :, :, 1);
 for idx = 1:img_size - 1
+% for idx = 1:5 
     % TODO: pos only need to get x and y
-    
+    fprintf('===================== stitching %d and %d ====================\n', idx, idx + 1);
     pos1 = descriptors(:, 1:2, idx);
     pos2 = descriptors(:, 1:2, idx + 1);
     
@@ -102,11 +106,14 @@ for idx = 1:img_size - 1
     [dx, dy] = alignDescriptor(match_pos1, match_pos2);
     % dx is the horizontal move for image(idx+1) to match image(idx)
     % dy is the vertical move for image(idx+1) to match image(idx)
-    panorama = matchImage(panorama, warpedImages(:, :, :, idx + 1), dx + accumulate_dx, dy);
+
     accumulate_dx = accumulate_dx + dx;
-    fprintf('idx: %d, panorama size:(%d %d %d), current dx: %d, accumulated dx:%d\n', idx, size(panorama, 1), size(panorama, 2), size(panorama, 3), dx, accumulate_dx);
+    accumulate_dy = accumulate_dy + dy;
+    fprintf('current dx: %d, current dy: %d, accumulated dx:%d, accumulated dy: %d\n', dx, dy, accumulate_dx, accumulate_dy);
+    [panorama, posi_thres, nega_thres] = matchImage(panorama, warpedImages(:, :, :, idx + 1), accumulate_dx, accumulate_dy, posi_thres, nega_thres);
+    fprintf('idx: %d, panorama size:(%d %d %d)\n', idx, size(panorama, 1), size(panorama, 2), size(panorama, 3));
     
-    filename = sprintf('%s_panorama_%d.jpg', task, idx);
+    filename = sprintf('%s_panorama_%d_%d.jpg', task, 1, idx + 1);
     output_path = fullfile(res_dir, filename);
     imwrite(panorama, output_path, 'jpg');
     % total_dy = total_dy + delta{idx}(2);
@@ -118,11 +125,6 @@ filename = sprintf('%s_panorama.jpg', task);
 output_path = fullfile(result_dir, filename);
 imwrite(panorama, output_path, 'jpg');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
 
 % restore original path
 path(old_path);
