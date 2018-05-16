@@ -33,7 +33,7 @@ function [panorama, posi_thres, nega_thres] = matchImage(image1, image2, dx, dy,
             if dy > posi_thres
                 panorama(1:h_1, 1:dx, :) = image1(:, 1:dx, :);
                 panorama(:, dx + 1:w_1, :) = blendImage2(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy, posi_thres, nega_thres);
-                panorama(dy + 1:end, w_1 + 1:end, :) = image2(:, w_1 - dx + 1:end, :);
+                panorama(abs(nega_thres) + dy + 1:end, w_1 + 1:end, :) = image2(:, w_1 - dx + 1:end, :);
                 posi_thres = dy;
                 fprintf('Update positive threshold: %d\n', posi_thres);
             else
