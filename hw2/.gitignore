@@ -2,5 +2,6 @@ res/
 mat/
 tutorial/
 .vscode/
-.DS_Store
+**/.DS_Store
+**/Thumbs.db
 data/*.zip
