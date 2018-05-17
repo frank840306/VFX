@@ -4,10 +4,12 @@ close all;
 % parameter setting
 
 % task = 'denny';     % denny for test, church for demo
-task = 'church';
+% task = 'church';
 % task = 'parrington';
 % task = 'HSNU';
 % task = 'csie';
+% task = 'stage';
+task = 'grail';
 
 % focal_length = 1000;
 % focal_length = 1094.45; % pseudo 1094.45

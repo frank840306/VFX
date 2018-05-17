@@ -20,7 +20,7 @@ function img = seamCarving(img)
             max_x = idx;
         end
     end
-    fprintf('min: %d, max: %d\n', min_x, max_x);
+    % fprintf('min: %d, max: %d\n', min_x, max_x);
     img = img(:, min_x:max_x, :);
     [h, w, ~] = size(img);
     
@@ -40,7 +40,7 @@ function img = seamCarving(img)
             up_limit = idx;
         end
     end
-    fprintf('up: %d, down: %d\n', up_limit, down_limit);
+    % fprintf('up: %d, down: %d\n', up_limit, down_limit);
             
     img(1:up_limit, :, :) = carve_up(img(1:up_limit, :, :));
     img(down_limit:end, :, :) = carve_down(img(down_limit:end, :, :));

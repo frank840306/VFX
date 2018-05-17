@@ -28,7 +28,7 @@ function [panorama, posi_thres, nega_thres] = matchImage(image1, image2, dx, dy,
         w_p = w_2 + dx;
         c_p = c_1;
         panorama = zeros(h_p, w_p, c_p);
-        fprintf('image size: %d %d %d\n', h_p, w_p, c_p);
+        % fprintf('image size: %d %d %d\n', h_p, w_p, c_p);
         if dy > 0
             if dy > posi_thres
                 panorama(1:h_1, 1:dx, :) = image1(:, 1:dx, :);

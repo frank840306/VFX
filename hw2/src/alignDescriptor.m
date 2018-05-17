@@ -23,9 +23,9 @@ function [dx, dy] = alignDescriptor(pos1, pos2)
     b(2 * pos_size + 1, 1) = 1;
 
     delta = round(A \ b);
-    fprintf('A size (%d %d), b size (%d %d), delta size (%d %d)\n', size(A, 1), size(A, 2), size(b, 1), size(b, 2), size(delta, 1), size(delta, 2));
+    % fprintf('A size (%d %d), b size (%d %d), delta size (%d %d)\n', size(A, 1), size(A, 2), size(b, 1), size(b, 2), size(delta, 1), size(delta, 2));
     % delta(3) = [];
     dx = delta(1);
     dy = delta(2);
-    fprintf('dx = %d, dy = %d, tmp = %d\n', dx, dy, delta(3));
+    % fprintf('dx = %d, dy = %d, tmp = %d\n', dx, dy, delta(3));
 end
