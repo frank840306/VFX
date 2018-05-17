@@ -30,6 +30,8 @@ function image_name_list = get_name_list(data_dir, task)
         name_template = 'prtn';
     elseif strcmp(task, 'HSNU')
         name_template = 'h_';
+    elseif strcmp(task, 'stage')
+        name_template = 's_';
     elseif strcmp(task, 'csie')
         name_template = 'IMG_';
     else
