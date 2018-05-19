@@ -21,7 +21,7 @@ function [max_match_pos1, max_match_pos2, sample_pos1, sample_pos2] = RANSAC(mat
     % matched_pos2 = pos2(matched_idx(:, 2), :);
 
     des_size = size(matched_idx, 1);
-    fprintf('RANSAC iteration: %d, descriptor size: %d\n', k, des_size);
+    % fprintf('RANSAC iteration: %d, descriptor size: %d\n', k, des_size);
     max_match_pos1 = [];
     max_match_pos2 = [];
 
@@ -74,7 +74,7 @@ function [max_match_pos1, max_match_pos2, sample_pos1, sample_pos2] = RANSAC(mat
             % L2(L2 < thres)
             max_match_pos1 = match_pos1;
             max_match_pos2 = match_pos2;
-            fprintf('Update max match %d/%d\n', size(max_match_pos1, 1), length(others_idx));
+            % fprintf('Update max match %d/%d\n', size(max_match_pos1, 1), length(others_idx));
         end
     end
 end

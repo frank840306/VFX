@@ -9,7 +9,7 @@ function blendedImage = blendImage2(img1, img2, dy, posi_thres, nega_thres)
     if (w_1 ~= w_2) || (c_1 ~= c_2)
         error('Error: image shape not match (%d %d %d) ~= (%d %d %d)', h_1, w_1, c_1, h_2, w_2, c_2);
     else
-        fprintf('Info: img1 (%d %d %d), img2 (%d %d %d), dy: %d\n', h_1, w_1, c_1, h_2, w_2, c_2, dy);
+        % fprintf('Info: img1 (%d %d %d), img2 (%d %d %d), dy: %d\n', h_1, w_1, c_1, h_2, w_2, c_2, dy);
         if dy > 0 && dy > posi_thres
             h_p = h_1 + (dy - posi_thres);
         elseif dy < 0 && dy < nega_thres    
@@ -19,7 +19,7 @@ function blendedImage = blendImage2(img1, img2, dy, posi_thres, nega_thres)
         end
         % h_p = max(h_1, h_2 + abs(dy));
         blendedImage = zeros(h_p, w_1, c_1);
-        fprintf('BlengImage2: image shape (%d %d %d), posi: %d, nega: %d\n', h_p, w_1, c_1, posi_thres, nega_thres);
+        % fprintf('BlengImage2: image shape (%d %d %d), posi: %d, nega: %d\n', h_p, w_1, c_1, posi_thres, nega_thres);
         if dy > 0
             blendedImage(1:dy + abs(nega_thres), :, :) = img1(1:dy + abs(nega_thres), :, :);
             if dy > posi_thres

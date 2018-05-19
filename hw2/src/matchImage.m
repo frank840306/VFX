@@ -35,7 +35,7 @@ function [panorama, posi_thres, nega_thres] = matchImage(image1, image2, dx, dy,
                 panorama(:, dx + 1:w_1, :) = blendImage2(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy, posi_thres, nega_thres);
                 panorama(abs(nega_thres) + dy + 1:end, w_1 + 1:end, :) = image2(:, w_1 - dx + 1:end, :);
                 posi_thres = dy;
-                fprintf('Update positive threshold: %d\n', posi_thres);
+                % fprintf('Update positive threshold: %d\n', posi_thres);
             else
                 panorama(:, 1:dx, :) = image1(:, 1:dx, :);
                 panorama(:, dx + 1:w_1, :) = blendImage2(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy, posi_thres, nega_thres);
@@ -49,7 +49,7 @@ function [panorama, posi_thres, nega_thres] = matchImage(image1, image2, dx, dy,
                 panorama(:, dx + 1:w_1, :) = blendImage2(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy, posi_thres, nega_thres);
                 panorama(1:h_2, w_1 + 1:end, :) = image2(:, w_1 - dx + 1:end, :);
                 nega_thres = dy;
-                fprintf('Update negative threshold: %d\n', nega_thres);
+                % fprintf('Update negative threshold: %d\n', nega_thres);
             else
                 panorama(:, 1:dx, :) = image1(:, 1:dx, :);
                 panorama(:, dx + 1:w_1, :) = blendImage2(image1(:, dx+1:end, :), image2(:, 1:w_1 - dx, :), dy, posi_thres, nega_thres);

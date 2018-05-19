@@ -41,8 +41,9 @@ function img = seamCarving(img)
         end
     end
     % fprintf('up: %d, down: %d\n', up_limit, down_limit);
-            
+    fprintf('Seam carving up...\n');
     img(1:up_limit, :, :) = carve_up(img(1:up_limit, :, :));
+    fprintf('Seam carving down...\n');
     img(down_limit:end, :, :) = carve_down(img(down_limit:end, :, :));
     img = uint8(img);
 end
@@ -54,7 +55,7 @@ function img = carve_up(img)
     carveFlag = zeros(1, size(img, 1));
     while true
         iter = iter + 1;
-        fprintf('========== Iteration %2d ==========\n', iter);
+        % fprintf('========== Iteration %2d ==========\n', iter);
         [h, w, c] = size(img);
         gray_img = rgb2gray(img);
         % gray_img(1:10, 77:95)
@@ -115,10 +116,10 @@ function img = carve_up(img)
                     img(min_grad_path(idx) + 1, segment_start(segment_idx) + idx - 1, :) = img(min_grad_path(idx), segment_start(segment_idx) + idx - 1, :) / 2 + img(min_grad_path(idx) + 2, segment_start(segment_idx) + idx - 1, :) / 2;
                 end
             end
-            fprintf('%d <--> %d V ', segment_start(segment_idx), segment_end(segment_idx));
+            % fprintf('%d <--> %d V ', segment_start(segment_idx), segment_end(segment_idx));
             % imwrite(uint8(img), sprintf('res/seam%d.png', iter), 'png');
         end
-        fprintf('\n');
+        % fprintf('\n');
     end
     img = uint8(img);
 end
@@ -163,12 +164,12 @@ function [segment_start, segment_end, segment_num] = expand_segment(bool_line)
     if length(segment_start) ~= length(segment_end)
         error('Error: size of segment_start and segment_end are not the same, %d ~= %d', length(segment_start), length(segment_end));
     else
-        fprintf('Expand Segment: start num: %d, end num: %d\n', length(segment_start), length(segment_end));
+        % fprintf('Expand Segment: start num: %d, end num: %d\n', length(segment_start), length(segment_end));
         segment_num = length(segment_start);
-        for idx = 1:segment_num
-            fprintf('%d <--> %d   ', segment_start(idx), segment_end(idx));
-        end
-        fprintf('\n');
+        % for idx = 1:segment_num
+            % fprintf('%d <--> %d   ', segment_start(idx), segment_end(idx));
+        % end
+        % fprintf('\n');
     end
 end
 
