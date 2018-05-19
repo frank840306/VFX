@@ -116,7 +116,7 @@ function img = carve_up(img)
                 end
             end
             fprintf('%d <--> %d V ', segment_start(segment_idx), segment_end(segment_idx));
-            imwrite(uint8(img), sprintf('res/seam%d.png', iter), 'png');
+            % imwrite(uint8(img), sprintf('res/seam%d.png', iter), 'png');
         end
         fprintf('\n');
     end
