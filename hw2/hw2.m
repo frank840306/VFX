@@ -9,7 +9,10 @@ close all;
 % task = 'HSNU';
 % task = 'csie';
 % task = 'stage';
-task = 'grail';
+% task = 'grail';
+% task = 'social';
+task = 'lake1';
+% task = 'lake2';
 
 % focal_length = 1000;
 % focal_length = 1094.45; % pseudo 1094.45
