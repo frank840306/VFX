@@ -1,11 +1,11 @@
 function [feature] = MSOP(image)
     
+    % construct 3-level image pyramid
+    % find all feature points and their descriptors
     [row, col, value] = localMax(image);
     descriptor = constructDescriptor(image, row, col);
-%     level = ones(length(row), 1);
     for i = 1:2
         n = 2 ^ i;
-%         disp(['Level: ' int2str(i) ', subsampling factor: ' int2str(n)]);
         image_tmp = image(1:n:end, 1:n:end);
         
         [row_tmp, col_tmp, value_tmp] = localMax(image_tmp);
@@ -13,17 +13,12 @@ function [feature] = MSOP(image)
         col = [col; col_tmp .* n];
         value = [value; value_tmp];
         
-%         disp(['Level: ' int2str(i) ', constructing descriptor...']);
         descriptor_tmp = constructDescriptor(image_tmp, row_tmp, col_tmp);
         descriptor = [descriptor; descriptor_tmp];
-        
-%         tmp(1:length(row_tmp), 1) = n;
-%         level = [level; tmp];
-%         clear tmp
     end
     
+    % non-maximal suppression
     dist = zeros(length(row));
-%     disp(['Number of features before non-maximal suppression: ' int2str(length(row))]);
     for i = 1:length(row)
         index = find(value > value(i));
         if isempty(index)
@@ -33,6 +28,7 @@ function [feature] = MSOP(image)
         end
     end
 
+    % get five hundred feature points
     n = 500;
     [~, index] = sort(dist, 'descend');
     row = row(index(1:n));
@@ -40,4 +36,3 @@ function [feature] = MSOP(image)
     descriptor = descriptor(index(1:n), :);
     
     feature = [col, row, descriptor];     % x, y form
-%     feature = [row, col, descriptor];       % matrix form

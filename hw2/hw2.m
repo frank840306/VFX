@@ -10,8 +10,8 @@ close all;
 % task = 'csie';
 % task = 'stage';
 % task = 'grail';
-task = 'social';
-% task = 'lake1';
+% task = 'social';
+task = 'lake1';
 % task = 'lake2';
 
 descriptor_thres = 0.8;

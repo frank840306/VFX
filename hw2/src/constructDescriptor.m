@@ -2,6 +2,7 @@ function [descriptor] = constructDescriptor(image, row, col)
     row_int = round(row);
     col_int = round(col);
 
+    % find theta of every feature point
     [Px, Py] = gradient(single(image));
     Px = imgaussfilt(Px, 4.5);
     Py = imgaussfilt(Py, 4.5);
@@ -14,8 +15,8 @@ function [descriptor] = constructDescriptor(image, row, col)
     index = isnan(S) | isinf(S);
     S(index) = 0;
 
+    % construct rotation matrix
     index = sub2ind(size(C), row_int, col_int);
-%     rotation = [C(index), -S(index), S(index), C(index)];
     rotation = [S(index), -C(index), C(index), S(index)];
     rotation = transpose(rotation);
     tmp = size(rotation);
@@ -26,16 +27,16 @@ function [descriptor] = constructDescriptor(image, row, col)
     descriptor = zeros(length(row_int), 64);
     cell(1:8) = 5;
     for i = 1:length(row_int)
-        % prepare window
+        % prepare 40*40 window
         window(1, :) = reshape(repmat((col_int(i) - 19:col_int(i) + 20), [40, 1]), 1, 1600);
         window(2, :) = repmat((row_int(i) - 19:row_int(i) + 20), [1, 40]);
         
-        % rotate window
+        % rotate the window
         window(:, :) = rotation(:, :, i) * window;
         window(1, :) = round(window(1, :));
         window(2, :) = round(window(2, :));
         
-        %shift window
+        % shift window to make its center on the correct place
         window(1, :) = window(1, :) + (col_int(i) - window(1, 780));
         window(2, :) = window(2, :) + (row_int(i) - window(2, 780));
         index = sub2ind(size(image), round(window(2, :)), round(window(1, :)));
@@ -45,7 +46,8 @@ function [descriptor] = constructDescriptor(image, row, col)
             descriptor(i, j) = mean(mean(C{j}));
         end
     end
+    
+    % descriptor normalization
     M = mean(descriptor, 2);
     S = std(descriptor, 0, 2);
     descriptor = (descriptor - M) ./ S;
-%     disp(size(descriptor));
